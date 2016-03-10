@@ -13,6 +13,18 @@ class Admin_model extends CI_Model{
         $this->db->insert('staruser',$data);
     }
 
+    /**
+     * @param $data
+     * @return bool
+     */
+    public function check_new($data){
+        $flag = false;
+        
+
+
+        return $flag;
+    }
+
     public function check($token){
 //信息查询取出
         $data=$this->db->get_where('staruser',array('token'=>$token))->result_array();
@@ -22,7 +34,7 @@ class Admin_model extends CI_Model{
     public function change($data,$uid){
         //数据更新
 
-        $this->db->update('staruser',$data,array('uid'=>$uid));
+        $this->db->update('staruser', $data, array('uid'=>$uid));
     }
 
 
