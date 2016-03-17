@@ -19,7 +19,7 @@ class Admin_model extends CI_Model{
      */
     public function check_new($data){
         $flag = false;
-        
+
 
 
         return $flag;
@@ -31,11 +31,10 @@ class Admin_model extends CI_Model{
         return $data;
     }
 
-    public function change($data,$uid){
+    public function change($uid){
         //数据更新
-
-        $this->db->update('staruser', $data, array('uid'=>$uid));
+        $q = $this->db->simple_query('UPDATE staruser SET status =1 WHERE uid ='.$uid.';');
+        return $q;
     }
-
 
 }

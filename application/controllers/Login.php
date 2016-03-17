@@ -56,20 +56,32 @@ class Login extends CI_Controller{
         $token=$_GET['token'];
         $this->load->model('Admin_model','admin');
         $a=$this->admin->check($token);
-        var_dump($a);
+        echo "status:".$a[0]["status"];
+        echo '<br />';
 
-        //对比session值是否一致
-        if($token==$a[0]['token'])
-        {$data['status']=1;
-            $uid=$a[0]['uid'];
-            if($this->admin->change($data,$uid))
-            {echo 'success';}
-            else
-                echo 'lose';
+        //对比session值是否一致 && 是否已经认证
+        if($a[0]["status"] == 1)
+        {
+            echo '请不要重复认证！';
         }
         else
-            echo '验证失败';
+        {
+            if($token==$a[0]['token'] )
+            {
+                $uid=$a[0]['uid'];
+                if($this->admin->change($uid))
+                {
+                    echo 'success';
+                }
+                else
+                {
+                    echo 'lose';
+                }
 
+            }
+            else
+                echo '验证认证失败，请联系管理员';
+        }
     }
 
 
