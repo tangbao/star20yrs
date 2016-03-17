@@ -17,12 +17,12 @@ class Admin_model extends CI_Model{
      * @param $data
      * @return bool
      */
-    public function check_new($data){
-        $flag = false;
+    public function check_new($data, $error){
 
 
 
-        return $flag;
+
+        return $error;
     }
 
     public function check($token){
