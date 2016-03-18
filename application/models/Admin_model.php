@@ -18,9 +18,19 @@ class Admin_model extends CI_Model{
      * @return bool
      */
     public function check_new($data, $error){
+        $this->db->where('username', $data['username']);
+        $this->db->from('staruser');
+        if ($this->db->count_all_results() > 0)
+        {
+            $error[] = 'the username has been used';
+        }
 
-
-
+        $this->db->where('email', $data['email']);
+        $this->db->from('staruser');
+        if ($this->db->count_all_results() > 0)
+        {
+            $error[] = 'the email has been used';
+        }
 
         return $error;
     }

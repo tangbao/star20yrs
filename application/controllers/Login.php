@@ -17,7 +17,7 @@ class Login extends CI_Controller{
     public function add(){
         $this->load->model('Admin_model', 'admin');
         $this->load->library('email');
-        $error[] = '';
+        $error[] = array();
 
         //xss clean and verify whether the data is valid
         $username = $this->security->xss_clean($this->input->post('username'));
@@ -40,14 +40,15 @@ class Login extends CI_Controller{
             'password' => $password,
             'email' => $email,
             'regtime' => $reg_time,
-            'token' => 杀$token
+            'token' => $token
         );
 
-        $this->admin->check_new($data, $error);
+        $error = $this->admin->check_new($data, $error);
 
-
-        if (!empty($error))
+        //when count($error) > 1 , there must be error(s).
+        if (count($error) > 1)
         {
+            echo 'error:';
             var_dump($error);
         }
         else {
