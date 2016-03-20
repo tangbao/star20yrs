@@ -8,9 +8,55 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Login extends CI_Controller{
 
+
     //载入视图
-    public function index(){
-       $this->load->view('register.html');
+     public function index(){
+         $index = $this->captcha();
+         $this->load->view('register.html', $index);
+    }
+
+    public function captcha(){
+        $this->load->helper('captcha');//载入验证码函数
+        /*
+        * 配置项
+         */
+        $speed = 'abcdefghijklmnopqrstuvwxyz1234567890';
+        $word = '';
+        for ($i = 0; $i < 4; $i++) {
+            $word .= $speed[mt_rand(0, strlen($speed) - 1)];
+
+        }
+        //参数，注意要创建文件夹保存验证码图片，字体随便换吧
+        $vals = array(
+            'word'      => $word,
+            'img_path'  => './captcha/',
+            'img_url'   => 'http://localhost:5555/captcha',
+            'font_path' => './path/to/fonts/texb.ttf',
+            'img_width' => '50',
+            'img_height'    => '30',
+            'expiration'    => '180',
+            'word_length'   => '100',
+            'font_size' => '100',
+            'img_id'    => 'Imageid',
+            'pool'      => '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+
+
+            'colors'    => array(
+                'background' => array(255, 255, 255),
+                'border' => array(255, 255, 255),
+                'text' => array(0, 0, 0),
+                'grid' => array(255, 40, 40)
+            )
+        );
+
+        $cap = create_captcha($vals);
+        //验证码值写入SESSION，载入视图
+        if(!isset($_SESSION)){session_start();}
+
+        $_SESSION['dong'] = sha1($cap['word'].'dongdong_captcha');
+        $index['captcha'] = $cap['image'];
+        //echo $index['captcha'];
+        return $index;
     }
 
     //获取提交的信息
@@ -20,6 +66,12 @@ class Login extends CI_Controller{
         $error[] = array();
 
         //xss clean and verify whether the data is valid
+        $captcha = $this->security->xss_clean($this->input->post('captcha'));
+        if (sha1($captcha.'dongdong_captcha') != $_SESSION['dong'])
+        {
+            $error[] = "请输入正确的验证码";
+        }
+
         $username = $this->security->xss_clean($this->input->post('username'));
         $password = $this->security->xss_clean($this->input->post('password'));
         $password = sha1(md5($password));

@@ -171,35 +171,36 @@ if ( ! function_exists('create_captcha'))
 				$byte_index = $word_index = 0;
 				while ($word_index < $word_length)
 				{
+					// Do we have more random data to use?
+					// It could be exhausted by previous iterations
+					// ignoring bytes higher than $rand_max.
+					if ($byte_index === $pool_length)
+					{
+						// No failures should be possible if the
+						// first get_random_bytes() call didn't
+						// return FALSE, but still ...
+						for ($i = 0; $i < 5; $i++)
+						{
+							if (($bytes = $security->get_random_bytes($pool_length)) === FALSE)
+							{
+								continue;
+							}
+
+							$byte_index = 0;
+							break;
+						}
+
+						if ($bytes === FALSE)
+						{
+							// Sadly, this means fallback to mt_rand()
+							$word = '';
+							break;
+						}
+					}
+
 					list(, $rand_index) = unpack('C', $bytes[$byte_index++]);
 					if ($rand_index > $rand_max)
 					{
-						// Was this the last byte we have?
-						// If so, try to fetch more.
-						if ($byte_index === $pool_length)
-						{
-							// No failures should be possible if
-							// the first get_random_bytes() call
-							// didn't return FALSE, but still ...
-							for ($i = 0; $i < 5; $i++)
-							{
-								if (($bytes = $security->get_random_bytes($pool_length)) === FALSE)
-								{
-									continue;
-								}
-
-								$byte_index = 0;
-								break;
-							}
-
-							if ($bytes === FALSE)
-							{
-								// Sadly, this means fallback to mt_rand()
-								$word = '';
-								break;
-							}
-						}
-
 						continue;
 					}
 
@@ -282,13 +283,13 @@ if ( ! function_exists('create_captcha'))
 		if ($use_font === FALSE)
 		{
 			($font_size > 5) && $font_size = 5;
-			$x = mt_rand(0, $img_width / ($length / 3));
+			$x = mt_rand(0, $img_width / ($length ));
 			$y = 0;
 		}
 		else
 		{
 			($font_size > 30) && $font_size = 30;
-			$x = mt_rand(0, $img_width / ($length / 1.5));
+			$x = mt_rand(0, $img_width / ($length ));
 			$y = $font_size + 2;
 		}
 
