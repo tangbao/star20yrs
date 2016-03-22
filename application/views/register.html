@@ -5,14 +5,12 @@
     <title>注册</title>
 </head>
 <body>
-<form id="reg" action="/login/add" method="post">
+<?php echo form_open_multipart("http://localhost:5555/login/add"); ?>
     <p>用户名：<input type="text" class="input" name="username" id="user"></p>
     <p>密 码：<input type="password" class="input" name="password" id="pass"></p>
     <p>E-mail：<input type="text" class="input" name="email" id="email"></p>
+    <p><input type="file" name="userfile" size="20"></p>
     <p>验证码：<input type="text" class="input" name="captcha" id="captcha">
-        <!--<img alt="" src="<?php echo $captcha; ?>"
-             onclick="this.src = '<?php echo $captcha; ?>' + Math.random()"
-             style="cursor:pointer;" title="看不清？" /> -->
     <?php echo $captcha; ?>
     <p><input type="submit" class="btn" value="提交注册"></p>
 </form>

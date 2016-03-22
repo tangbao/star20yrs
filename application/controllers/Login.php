@@ -8,25 +8,28 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Login extends CI_Controller{
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->helper(array('form', 'url'));
+    }
 
     //载入视图
-     public function index(){
+     public function index()
+     {
          $index = $this->captcha();
          $this->load->view('register.html', $index);
     }
 
-    public function captcha(){
-        $this->load->helper('captcha');//载入验证码函数
-        /*
-        * 配置项
-         */
+    public function captcha()
+    {
+        $this->load->helper('captcha');
+        //captcha cofig
         $speed = 'abcdefghijklmnopqrstuvwxyz1234567890';
         $word = '';
         for ($i = 0; $i < 4; $i++) {
             $word .= $speed[mt_rand(0, strlen($speed) - 1)];
-
         }
-        //参数，注意要创建文件夹保存验证码图片，字体随便换吧
         $vals = array(
             'word'      => $word,
             'img_path'  => './captcha/',
@@ -39,8 +42,6 @@ class Login extends CI_Controller{
             'font_size' => '100',
             'img_id'    => 'Imageid',
             'pool'      => '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-
-
             'colors'    => array(
                 'background' => array(255, 255, 255),
                 'border' => array(255, 255, 255),
@@ -86,6 +87,24 @@ class Login extends CI_Controller{
 
         //make a token
         $token = sha1(session_id().$password);
+
+        //upload
+
+        $config['upload_path']      = './uploads/';
+        $config['allowed_types']    = 'bmp|jpg|png';
+        $config['max_size']     = 0;
+        $config['max_width']        = 0;
+        $config['max_height']       = 0;
+
+        $this->load->library('upload', $config);
+
+        if ( ! $this->upload->do_upload('userfile'))
+        {
+            $error[] = $this->upload->display_errors();
+        }
+
+
+
 
         $data = array(
             'username' => $username,
