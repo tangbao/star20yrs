@@ -92,18 +92,25 @@ class Login extends CI_Controller{
 
         $config['upload_path']      = './uploads/';
         $config['allowed_types']    = 'bmp|jpg|png';
+        $config['encrypt_name']     = TRUE;
         $config['max_size']     = 0;
         $config['max_width']        = 0;
         $config['max_height']       = 0;
 
         $this->load->library('upload', $config);
-
         if ( ! $this->upload->do_upload('userfile'))
         {
             $error[] = $this->upload->display_errors();
         }
+        else
+        {
+            $imgname = '/uploads/' . $this->upload->data('file_name');
+        }
 
-
+        if( $this->security->xss_clean('.' . $imgname, TRUE) === FALSE)
+        {
+            $error[] = "the pic may have some danger";
+        }
 
 
         $data = array(
@@ -111,7 +118,8 @@ class Login extends CI_Controller{
             'password' => $password,
             'email' => $email,
             'regtime' => $reg_time,
-            'token' => $token
+            'token' => $token,
+            'imgname' => $imgname
         );
 
         $error = $this->admin->check_new($data, $error);
