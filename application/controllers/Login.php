@@ -17,10 +17,19 @@ class Login extends CI_Controller{
     //载入视图
      public function index()
      {
-         $index = $this->captcha();
-         $this->load->view('register.html', $index);
+         $this->load->view('register.html');
     }
 
+    //new captcha
+    public function get_code()
+    {
+        $this->load->library('captcha');
+        $code = strtolower($this->captcha->getCaptcha());
+        $this->session->set_userdata('code', md5($code.'new captcha'));
+        $this->captcha->showImg();
+    }
+
+    /*  old function of captcha
     public function captcha()
     {
         $this->load->helper('captcha');
@@ -60,6 +69,8 @@ class Login extends CI_Controller{
         return $index;
     }
 
+    */
+
     //获取提交的信息
     public function add(){
         $this->load->model('Admin_model', 'admin');
@@ -68,7 +79,8 @@ class Login extends CI_Controller{
 
         //xss clean and verify whether the data is valid
         $captcha = $this->security->xss_clean($this->input->post('captcha'));
-        if (sha1($captcha.'dongdong_captcha') != $_SESSION['dong'])
+        $captcha = strtolower($captcha);
+        if (md5($captcha.'new captcha') != $_SESSION['code'])
         {
             $error[] = "请输入正确的验证码";
         }
@@ -136,8 +148,8 @@ class Login extends CI_Controller{
 
             //send the email
             $emailbody = "亲爱的" . $data['username'] . "：<br/>感谢您在我站注册了新帐号。<br/>请点击链接激活您的帐号。<br/>
-        <a href='http://localhost:5555/login/check?token='" . $data['token'] . " target=
-    '_blank'>http://localhost:5555/login/check?token=" . $data['token'] . "</a><br/>
+        <a href='http://localhost/login/check?token='" . $data['token'] . " target=
+    '_blank'>http://localhost/login/check?token=" . $data['token'] . "</a><br/>
         如果以上链接无法点击，请将它复制到你的浏览器地址栏中进入访问，该链接24小时内有效。";
 
 
