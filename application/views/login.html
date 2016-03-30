@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="/application/views/style.css">
+	<link rel="stylesheet" type="text/css" href="/application/views/normal.css">
+</head>
+<body>
+	<div class="login">
+		<div class="comWidth">
+			<ul>
+				<li>
+					姓&nbsp;名：<input type="text">
+				</li>
+				<li>
+					邮&nbsp;箱：<input type="text"><b id="count"></b>
+					<ul class="emailHelp">
+						<li><a href="#" onclick="js_method();return false;"><span></span>@qq.com</a></li>
+						<li><a href="#" onclick="js_method();return false;"><span></span>@yahoo.com</a></li>
+						<li><a href="#" onclick="js_method();return false;"><span></span>@163.com</a></li>
+						<li><a href="#" onclick="js_method();return false;"><span></span>@126.com</a></li>
+					</ul>
+				</li>
+
+				<li>
+					手机号：<input type="text"><b id="phoneW"></b>
+				</li>
+				<li>
+					年&nbsp;级：<input type="text" placeholder="格式：2016级">
+				</li>
+				<li>
+					学&nbsp;院：<input type="text">
+					<ul class="schoolList">
+						<li>通信与信息工程学院</li>
+						<li>电子工程学院</li>
+						<li>英才实验学院</li>
+						<li>物理电子学院</li>
+						<li>计算机科学与工程学院</li>
+						<li>自动化工程学院</li>
+						<li>信息与软件工程学院</li>
+						<li>数学科学学院</li>
+						<li>微电子与固体电子学院</li>
+						<li>机械电子工程学院</li>
+						<li>航空航天学院</li>
+						<li>生命科学与技术学院</li>
+						<li>经济与管理学院</li>
+						<li>外国语学院</li>
+						<li>格拉斯哥学院</li>
+						<li>政治与公共管理学院</li>
+						<li>马克思主义教育学院</li>
+						<li>资源与环境学院</li>
+						<li>能源科学与工程学院</li>
+						<li>医学院</li>
+						<li>成都学院</li>
+						<li>中山学院</li>
+					</ul>
+				</li>
+				<li class="di" id="dr0">
+					工作室技术方向：
+                    <select>
+                        <option>前端</option>
+                        <option>后台</option>
+                        <option>SA</option>
+                        <option>安卓</option>
+                        <option>产品</option>
+                        <option>UI</option>
+                    </select>
+					
+				</li>
+                <li class="di" id="dr1">
+					工作技术方向：
+                    <select>
+                        <option>前端</option>
+                        <option>后台</option>
+                        <option>SA</option>
+                        <option>安卓</option>
+                        <option selected="selected">产品</option>
+                        <option>UI</option>
+                    </select>
+					
+				</li>
+			</ul>
+                <li>
+				    头像<input type="file"></input>
+                </li>
+		</div>	
+	</div>
+	<button>提交</button>
+	<script type="text/javascript" src="/application/views/index.js"></script>
+</body>
+</html>

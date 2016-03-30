@@ -17,7 +17,7 @@ class Login extends CI_Controller{
     //载入视图
      public function index()
      {
-         $this->load->view('register.html');
+         $this->load->view('login.html');
     }
 
     //new captcha
