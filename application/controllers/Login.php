@@ -18,7 +18,7 @@ class Login extends CI_Controller
     //载入视图
     public function index()
     {
-        $this->load->view('login.html');
+        $this->load->view('index.html');
     }
 
     //new captcha
@@ -112,9 +112,9 @@ class Login extends CI_Controller
         $config['upload_path'] = './uploads/';
         $config['allowed_types'] = 'bmp|jpg|png';
         $config['encrypt_name'] = TRUE;
-        $config['max_size'] = 0;
-        $config['max_width'] = 0;
-        $config['max_height'] = 0;
+//        $config['max_size'] = 0;
+//        $config['max_width'] = 0;
+//        $config['max_height'] = 0;
 
         $this->load->library('upload', $config);
         if (!$this->upload->do_upload('image')) {
@@ -142,6 +142,7 @@ class Login extends CI_Controller
             'token' => $token,
             'imgname' => $imgname
         );
+        var_dump($data);die;
 
         //检查是否重复注册
         $error = $this->admin->check_new($data);
