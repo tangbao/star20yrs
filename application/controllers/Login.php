@@ -6,7 +6,8 @@
  * Time: 下午7:27
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Login extends CI_Controller{
+class Login extends CI_Controller
+{
 
     public function __construct()
     {
@@ -15,9 +16,9 @@ class Login extends CI_Controller{
     }
 
     //载入视图
-     public function index()
-     {
-         $this->load->view('login.html');
+    public function index()
+    {
+        $this->load->view('login.html');
     }
 
     //new captcha
@@ -25,7 +26,7 @@ class Login extends CI_Controller{
     {
         $this->load->library('captcha');
         $code = strtolower($this->captcha->getCaptcha());
-        $this->session->set_userdata('code', md5($code.'new captcha'));
+        $this->session->set_userdata('code', md5($code . 'new captcha'));
         $this->captcha->showImg();
     }
 
@@ -72,76 +73,80 @@ class Login extends CI_Controller{
     */
 
     //获取提交的信息
-    public function add(){
+    public function add()
+    {
         $this->load->model('Admin_model', 'admin');
         $this->load->library('email');
-        $error[] = array();
+        //$error[] = array();
 
         //xss clean and verify whether the data is valid
         $captcha = $this->security->xss_clean($this->input->post('captcha'));
         $captcha = strtolower($captcha);
-        if (md5($captcha.'new captcha') != $_SESSION['code'])
-        {
-            $error[] = "请输入正确的验证码";
+        if (md5($captcha . 'new captcha') != $_SESSION['code']) {
+            echo 1; //验证码错误
         }
 
-        $username = $this->security->xss_clean($this->input->post('username'));
-        $password = $this->security->xss_clean($this->input->post('password'));
-        $password = sha1(md5($password));
+        $name = $this->security->xss_clean($this->input->post('name'));
         $email = $this->security->xss_clean($this->input->post('email'));
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL))
-        {
-            $error[] = "plz fill in the correct email address";
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo 5; //邮箱不符合格式
         }
+
+        $sex = $this->security->xss_clean($this->input->post('sex'));
+        $phone = $this->security->xss_clean($this->input->post('phone'));
+        $grade = $this->security->xss_clean($this->input->post('grade'));
+        $school = $this->security->xss_clean($this->input->post('school'));
+        $company = $this->security->xss_clean($this->input->post('company'));
+        $major = $this->security->xss_clean($this->input->post('major'));
+        $location = $this->security->xss_clean($this->input->post('location'));
+        $words = $this->security->xss_clean($this->input->post('words'));
         //set time zone and format time
         date_default_timezone_set('Asia/Shanghai');
         $reg_time = date('F j Y h:i:s A');
 
         //make a token
-        $token = sha1(session_id().$password);
+        $token = sha1(session_id() . $name);
 
         //upload
 
-        $config['upload_path']      = './uploads/';
-        $config['allowed_types']    = 'bmp|jpg|png';
-        $config['encrypt_name']     = TRUE;
-        $config['max_size']         = 0;
-        $config['max_width']        = 0;
-        $config['max_height']       = 0;
+        $config['upload_path'] = './uploads/';
+        $config['allowed_types'] = 'bmp|jpg|png';
+        $config['encrypt_name'] = TRUE;
+        $config['max_size'] = 0;
+        $config['max_width'] = 0;
+        $config['max_height'] = 0;
 
         $this->load->library('upload', $config);
-        if ( ! $this->upload->do_upload('userfile'))
-        {
-            $error[] = $this->upload->display_errors();
-        }
-        else
-        {
+        if (!$this->upload->do_upload('image')) {
+            echo 2; //图片上传失败
+        } else {
             $imgname = '/uploads/' . $this->upload->data('file_name');
         }
 
-        if( $this->security->xss_clean('.' . $imgname, TRUE) === FALSE)
-        {
-            $error[] = "the pic may have some danger";
-        }
+
+        //todo:图片过滤
 
 
         $data = array(
-            'username' => $username,
-            'password' => $password,
+            'name' => $name,
+            'sex' => $sex,
             'email' => $email,
+            'phone' => $phone,
+            'grade' => $grade,
+            'school' => $school,
+            'company' => $company,
+            'major' => $major,
+            'location' => $location,
+            'words' => $words,
             'regtime' => $reg_time,
             'token' => $token,
             'imgname' => $imgname
         );
 
-        $error = $this->admin->check_new($data, $error);
-
-        //when count($error) > 1 , there must be error(s).
-        if (count($error) > 1)
-        {
-            echo 'error:';
-            var_dump($error);
-        }
+        //检查是否重复注册
+        $error = $this->admin->check_new($data);
+        if ($error <> 0)
+            echo $error;
         else {
             //insert into database
             $this->admin->add($data);
@@ -157,44 +162,73 @@ class Login extends CI_Controller{
             $this->email->to('tzzmain@qq.com');
             $this->email->subject('邮箱激活通知');
             $this->email->message($emailbody);
-            $this->email->send();
-            echo $this->email->print_debugger();
+            $error = $this->email->send(); //成功返回true
 
-            echo '注册成功';
+            if (!$error)
+                echo '邮件发送失败';
+            else
+                echo '发送成功！';
         }
     }
 
-    public function check(){
-        $token=$_GET['token'];
-        $this->load->model('Admin_model','admin');
-        $a=$this->admin->check($token);
-        echo "status:".$a[0]["status"];
+    public function check()
+    {
+        $token = $_GET['token'];
+        $this->load->model('Admin_model', 'admin');
+        $a = $this->admin->check($token);
+        echo "status:" . $a[0]["status"];
         echo '<br />';
 
         //对比session值是否一致 && 是否已经认证
-        if($a[0]["status"] == 1)
-        {
-            echo '请不要重复认证！';
-        }
-        else
-        {
-            if($token==$a[0]['token'] )
-            {
-                $uid=$a[0]['uid'];
-                if($this->admin->change($uid))
-                {
+        if ($a[0]["status"] == 1) {
+            echo '已认证';
+        } else {
+            if ($token == $a[0]['token']) {
+                $uid = $a[0]['uid'];
+                if ($this->admin->change($uid)) {
                     echo 'success';
-                }
-                else
-                {
+                } else {
                     echo 'lose';
                 }
 
-            }
-            else
-                echo '验证认证失败，请联系管理员';
+            } else
+                echo '验证失败，请联系管理员';
         }
     }
+
+/*
+    public function user_add()
+    {
+        //接受表单数据
+        $data = array(
+            'name' => $this->input->post('name'),
+            'email' => $this->input->post('email'),
+            'phpnenumber' => $this->input->post('phonenumber'),
+            'college' => $this->input->post('college'),
+            'major' => $this->input->post('major'),
+            'work' => $this->input->post('work'),
+        );
+//        var_dump($data);
+
+
+        //图片上传处理,之前应该验证一下是否有图片,前端会传一个值，我们判断值的属性，为1则执行上传，为0则不执行，存入数据库，代表有无图片
+
+
+        $config['upload_path'] = './uploads/';
+        $config['allowed_types'] = 'gif|jpg|png';
+        $config['max_size'] = 10000;
+        $config['max_width'] = 1920;
+        $config['max_height'] = 1080;
+
+        $this->load->library('upload', $config);
+        $this->upload->do_upload('picture');
+        $data1 = array('upload_data' => $this->upload->data());
+        var_dump($data);
+        var_dump($data1);
+
+
+    }*/
+
 
 
 }

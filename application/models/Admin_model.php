@@ -17,22 +17,22 @@ class Admin_model extends CI_Model{
      * @param $data
      * @return bool
      */
-    public function check_new($data, $error){
-        $this->db->where('username', $data['username']);
+    public function check_new($data){
+        $this->db->where('username', $data['phone']);
         $this->db->from('staruser');
         if ($this->db->count_all_results() > 0)
         {
-            $error[] = 'the username has been used';
+            return 4; //手机号已存在
         }
 
         $this->db->where('email', $data['email']);
         $this->db->from('staruser');
         if ($this->db->count_all_results() > 0)
         {
-            $error[] = 'the email has been used';
+            return 3; //邮箱已存在
         }
 
-        return $error;
+        return 0;
     }
 
     public function check($token){

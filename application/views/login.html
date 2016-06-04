@@ -3,18 +3,19 @@
 <head>
 	<meta charset="UTF-8">
 	<title></title>
-	<link rel="stylesheet" type="text/css" href="/application/views/style.css">
-	<link rel="stylesheet" type="text/css" href="/application/views/normal.css">
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url().'style/style.css'?>">
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url().'style/normal.css'?>">
 </head>
 <body>
+<form method="post" enctype="multipart/form-data" action="<?php echo site_url().'index.php/Login/user_add'?>">
 	<div class="login">
 		<div class="comWidth">
 			<ul>
 				<li>
-					姓&nbsp;名：<input type="text">
+					姓&nbsp;名：<input type="text" name="name">
 				</li>
 				<li>
-					邮&nbsp;箱：<input type="text"><b id="count"></b>
+					邮&nbsp;箱：<input type="text" name="email"><b id="count"></b>
 					<ul class="emailHelp">
 						<li><a href="#" onclick="js_method();return false;"><span></span>@qq.com</a></li>
 						<li><a href="#" onclick="js_method();return false;"><span></span>@yahoo.com</a></li>
@@ -24,13 +25,13 @@
 				</li>
 
 				<li>
-					手机号：<input type="text"><b id="phoneW"></b>
+					手机号：<input type="text" name="phonenumber"><b id="phoneW"></b>
 				</li>
 				<li>
-					年&nbsp;级：<input type="text" placeholder="格式：2016级">
+					年&nbsp;级：<input type="text" name="grade" placeholder="格式：2016级">
 				</li>
 				<li>
-					学&nbsp;院：<input type="text">
+					学&nbsp;院：<input type="text" name="college">
 					<ul class="schoolList">
 						<li>通信与信息工程学院</li>
 						<li>电子工程学院</li>
@@ -56,9 +57,9 @@
 						<li>中山学院</li>
 					</ul>
 				</li>
-				<li class="di" id="dr0">
+				<li class="di"  id="dr0">
 					工作室技术方向：
-                    <select>
+                    <select  name="major">
                         <option>前端</option>
                         <option>后台</option>
                         <option>SA</option>
@@ -70,7 +71,7 @@
 				</li>
                 <li class="di" id="dr1">
 					工作技术方向：
-                    <select>
+                    <select name="work">
                         <option>前端</option>
                         <option>后台</option>
                         <option>SA</option>
@@ -82,11 +83,13 @@
 				</li>
 			</ul>
                 <li>
-				    头像<input type="file"></input>
+				    头像<input type="file" name="picture"></input>
                 </li>
 		</div>	
 	</div>
 	<button>提交</button>
-	<script type="text/javascript" src="/application/views/index.js"></script>
+
+</form>
+	<script type="text/javascript" src="<?php echo base_url().'index.php/style/index.js'?>"></script>
 </body>
 </html>
