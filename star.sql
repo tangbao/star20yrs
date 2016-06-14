@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 2016-06-04 16:59:42
+-- Generation Time: 2016-06-14 13:46:42
 -- 服务器版本： 5.6.17
 -- PHP Version: 5.5.12
 
@@ -23,13 +23,13 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- 表的结构 `star`
+-- 表的结构 `user`
 --
 
-CREATE TABLE IF NOT EXISTS `star` (
+CREATE TABLE IF NOT EXISTS `user` (
   `uid` int(6) NOT NULL AUTO_INCREMENT,
   `name` varchar(10) CHARACTER SET utf8 NOT NULL,
-  `sex` varchar(2) NOT NULL,
+  `sex` varchar(2) CHARACTER SET utf8 NOT NULL,
   `email` varchar(30) NOT NULL,
   `phone` varchar(11) CHARACTER SET utf8 NOT NULL,
   `grade` varchar(4) CHARACTER SET utf8 NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `star` (
   `status` varchar(1) NOT NULL DEFAULT '0',
   `reg_time` varchar(40) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

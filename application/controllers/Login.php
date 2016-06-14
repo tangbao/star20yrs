@@ -75,6 +75,7 @@ class Login extends CI_Controller
     //获取提交的信息
     public function add()
     {
+        //载入模型与邮件类
         $this->load->model('Admin_model', 'admin');
         $this->load->library('email');
         //$error[] = array();
@@ -104,23 +105,36 @@ class Login extends CI_Controller
         date_default_timezone_set('Asia/Shanghai');
         $reg_time = date('F j Y h:i:s A');
 
+
         //make a token
         $token = sha1(session_id() . $name);
 
-        //upload
+        //upload file
 
-        $config['upload_path'] = './uploads/';
-        $config['allowed_types'] = 'bmp|jpg|png';
-        $config['encrypt_name'] = TRUE;
+        //判断上传文件是否存在，不存在使用默认头像
+
+        if(!empty($_FILES['image']['tmp_name']))
+        {
+
+
+
+            $config['upload_path'] = './uploads/';
+            $config['allowed_types'] = 'bmp|jpg|png';
+            $config['encrypt_name'] = TRUE;
 //        $config['max_size'] = 0;
 //        $config['max_width'] = 0;
 //        $config['max_height'] = 0;
 
-        $this->load->library('upload', $config);
-        if (!$this->upload->do_upload('image')) {
-            echo 2; //图片上传失败
-        } else {
-            $imgname = '/uploads/' . $this->upload->data('file_name');
+            $this->load->library('upload', $config);
+            if (!$this->upload->do_upload('image')) {
+                echo 2; //图片上传失败
+            } else {
+                $imgname = '/uploads/' . $this->upload->data('file_name');
+            }
+        }
+        else{
+
+            $imgname='/uploads/moren.jpg';
         }
 
 
@@ -138,11 +152,13 @@ class Login extends CI_Controller
             'major' => $major,
             'location' => $location,
             'words' => $words,
-            'regtime' => $reg_time,
+            'reg_time' => $reg_time,
             'token' => $token,
             'imgname' => $imgname
         );
-        var_dump($data);die;
+
+
+
 
         //检查是否重复注册
         $error = $this->admin->check_new($data);
@@ -153,15 +169,16 @@ class Login extends CI_Controller
             $this->admin->add($data);
 
             //send the email
-            $emailbody = "亲爱的" . $data['username'] . "：<br/>感谢您在我站注册了新帐号。<br/>请点击链接激活您的帐号。<br/>
+            $emailbody = "名字：" . $data['name'] . "：<br/>性别：".$data['sex']."<br/>学院:".$data['school']." <br/>毕业年级:" .$data['grade']."<br/>公司:" .$data['company']."<br>电话号码：".$data['phone']." 若判定其为工作室成员，请点击以下链接通过验证<br/>
         <a href='http://localhost/login/check?token='" . $data['token'] . " target=
     '_blank'>http://localhost/login/check?token=" . $data['token'] . "</a><br/>
         如果以上链接无法点击，请将它复制到你的浏览器地址栏中进入访问，该链接24小时内有效。";
 
 
-            $this->email->from('wangdong95@126.com', 'star');
-            $this->email->to('tzzmain@qq.com');
-            $this->email->subject('邮箱激活通知');
+            $this->email->from('18anniversary@starstudio.org
+', 'star');
+            $this->email->to('550965989@qq.com');
+            $this->email->subject('用户验证信息');
             $this->email->message($emailbody);
             $error = $this->email->send(); //成功返回true
 
@@ -177,58 +194,100 @@ class Login extends CI_Controller
         $token = $_GET['token'];
         $this->load->model('Admin_model', 'admin');
         $a = $this->admin->check($token);
-        echo "status:" . $a[0]["status"];
-        echo '<br />';
 
-        //对比session值是否一致 && 是否已经认证
+//        $this->load->library('email');//载入类库
+//
+//        $emailbody='星辰工作室的前辈好，恭喜您的信息已通过管理员的审核';
+//
+//
+//        $this->email->from('18anniversary@starstudio.org
+//', 'star');
+//        $this->email->to($a[0]['email']);
+//        $this->email->subject('验证通过通知');
+//        $this->email->message($emailbody);
+//        $error = $this->email->send(FALSE);//成功返回true
+//        $a=$this->email->print_debugger();
+//        echo $a;
+//
+//
+//        if($error)
+//            echo "已发送成功";
+//        else
+//        {echo " 发送失败";}
+//
+//        die;
+
+//        echo "status:" . $a[0]["status"];
+//        echo '<br />';
+
+
+
+//        对比session值是否一致 && 是否已经认证
         if ($a[0]["status"] == 1) {
             echo '已认证';
         } else {
             if ($token == $a[0]['token']) {
                 $uid = $a[0]['uid'];
                 if ($this->admin->change($uid)) {
-                    echo 'success';
+                    //验证成功后给用户也发邮件
+                    $this->load->library('email');//载入类库
+
+                    $emailbody='星辰工作室的前辈好，恭喜您的信息已通过管理员的审核';
+
+
+                    $this->email->from('18anniversary@starstudio.org
+', 'star');
+                    $this->email->to($a[0]['email']);
+                    $this->email->subject('验证通过通知');
+                    $this->email->message($emailbody);
+                    $error = $this->email->send();//成功返回true
+                    if($error)
+                        echo "通知信息已发送成功";
+                    else
+                        echo " 发送失败";
+
+
                 } else {
                     echo 'lose';
                 }
 
             } else
-                echo '验证失败，请联系管理员';
+                echo '验证失败，请反馈给工作室人员';
         }
     }
-
-/*
-    public function user_add()
-    {
-        //接受表单数据
-        $data = array(
-            'name' => $this->input->post('name'),
-            'email' => $this->input->post('email'),
-            'phpnenumber' => $this->input->post('phonenumber'),
-            'college' => $this->input->post('college'),
-            'major' => $this->input->post('major'),
-            'work' => $this->input->post('work'),
-        );
+//
+///*
+//    public function user_add()
+//    {
+//        //接受表单数据
+//        $data = array(
+//            'name' => $this->input->post('name'),
+//            'email' => $this->input->post('email'),
+//            'phpnenumber' => $this->input->post('phonenumber'),
+//            'college' => $this->input->post('college'),
+//            'major' => $this->input->post('major'),
+//            'work' => $this->input->post('work'),
+//        );
+////        var_dump($data);
+//
+//
+//        //图片上传处理,之前应该验证一下是否有图片,前端会传一个值，我们判断值的属性，为1则执行上传，为0则不执行，存入数据库，代表有无图片
+//
+//
+//        $config['upload_path'] = './uploads/';
+//        $config['allowed_types'] = 'gif|jpg|png';
+//        $config['max_size'] = 10000;
+//        $config['max_width'] = 1920;
+//        $config['max_height'] = 1080;
+//
+//        $this->load->library('upload', $config);
+//        $this->upload->do_upload('picture');
+//        $data1 = array('upload_data' => $this->upload->data());
 //        var_dump($data);
-
-
-        //图片上传处理,之前应该验证一下是否有图片,前端会传一个值，我们判断值的属性，为1则执行上传，为0则不执行，存入数据库，代表有无图片
-
-
-        $config['upload_path'] = './uploads/';
-        $config['allowed_types'] = 'gif|jpg|png';
-        $config['max_size'] = 10000;
-        $config['max_width'] = 1920;
-        $config['max_height'] = 1080;
-
-        $this->load->library('upload', $config);
-        $this->upload->do_upload('picture');
-        $data1 = array('upload_data' => $this->upload->data());
-        var_dump($data);
-        var_dump($data1);
-
-
-    }*/
+//        var_dump($data1);
+//
+//
+//    }
 
 
 

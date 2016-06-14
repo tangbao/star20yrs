@@ -4,23 +4,23 @@
 	<meta charset="UTF-8">
 	<title></title>
 	<link rel="stylesheet" type="text/css" href="<?php echo base_url().'style/style.css'?>">
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url().'style/normal.css'?>">
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url().'style/normal.css'?>>
 </head>
 <body>
 	<div class="login">
 		<div class="comWidth">
-			<form name="input" action="<?php echo site_url().'index.php/Login/add'?>" enctype="multipart/form-data" method="post">
+			<form name="input"  enctype="multipart/form-data" action="<?php echo site_url().'index.php/Login/add'?>" method="post">
 				<ul>
 					<li>
-						姓&nbsp;名：<input type="text"  name="name" required="required"><b id="nameError"></b>
+						姓&nbsp;名：<input type="text" required="required" name="name" /><b id="nameError"></b>
 					</li>
 					<li>性&nbsp;别
-						<label for="male">男</label><input type="radio" value="男" id="male" name="sex" />
-						<label for="female">女</label><input type="radio" value="女" id="female" name="sex" />
-						<label for="secret">保密</label><input type="radio" value="保密" id="secret" name="sex" />
+						<label for="male" form="input">男</label><input type="radio" value="男" id="male" name="sex" class="sex" />
+						<label for="female" form="input">女</label><input type="radio" value="女" id="female" name="sex" class="sex" />
+						<label for="secret" form="input">保密</label><input type="radio" value="保密" id="secret" name="sex" class="sex" /><b id="sexError"></b>
 					</li>
 					<li>
-						邮&nbsp;箱：<input type="text" name="email" required="required"><b id="count"></b>
+						邮&nbsp;箱：<input type="text" required="required" name="email" /><b id="count"></b>
 						<ul class="emailHelp">
 							<li><span></span>@qq.com</li>
 							<li><span></span>@gmail.com</li>
@@ -34,12 +34,12 @@
 					</li>
 
 					<li>
-						电话号码：<input type="text" required="required"><b id="phoneW"></b>
+						电话号码：<input type="text" required="required" name="phone" /><b id="phoneW"></b>
 					</li>
 					<li>
 						年&nbsp;级：
-						<!-- <input type="text" placeholder="格式：2016级"> -->
-						<select>
+						<select id="grade" name="grade"  required="required">
+	                        <option>2016级</option>
 	                        <option>1990级</option>
 	                        <option>1991级</option>
 	                        <option>1992级</option>
@@ -68,10 +68,10 @@
 	                        <option>2015级</option>
 	                        <option>2016级</option>
 	                       
-	                    </select>（毕业年份为准）
+	                    </select>（毕业年份为准）<b id="gradeError"></b>
 					</li>
 					<li>
-						学&nbsp;院：<input type="text">
+						学&nbsp;院：<input type="text" name="school" required="required" />
 						<ul class="schoolList">
 							<li>通信与信息工程学院</li>
 							<li>电子工程学院</li>
@@ -95,12 +95,12 @@
 							<li>医学院</li>
 							<li>成都学院</li>
 							<li>中山学院</li>
-						</ul>
+						</ul><b id="xyError"></b>
 					</li>
-					<li>公司：<input type="text" required="required" /></li>
+					<li>公司：<input type="text" required="required" name="company" /><b id="companyError"></b></li>
 					<li class="di" id="dr0">
 						技术方向：
-	                    <select>
+	                    <select name="major" required="required">
 	                        <option>软件研发工程师</option>
 	                        <option>硬件研发工程师</option>
 	                        <option>运维工程师</option>
@@ -111,19 +111,21 @@
 	                    </select>
 
 					</li>
+					<li>所在城市：<input type="text" required="required" name="location" /><b id="locationError"></b></li>
 	                
 				</ul>
 	                <li id="logo">
 					    头像<input type="file" name="image" />
 	                </li>
-	                <li>想说的话：<input type="text" min="1" max="400" /></li>
-	                <!-- <li id="hidden"><input value="0" type="hidden" /></li> -->
-	                <input type="submit" value="提交表单" />
-		</div>
+	                <li>想说的话：<input type="text" min="1" max="400" name="words" placeholder="字数不要超过两百字" /><b id="wordsError"></b></li>
 		<p>验证码：<input type="text" class="input" name="captcha" id="captcha">
     <img src="<?php echo site_url('index.php/login/get_code'); ?>" id="code" style="cursor:pointer;"
          onclick="this.src = this.src + '?re=' +Math.random()" title="点击刷新（不区分大小写）" />
+        <b id="captchaError"></b>
+	                <!-- <li id="hidden"><input value="0" type="hidden" /></li> -->
+	            <li>   <input type="submit" value="提交表单" id="button" /></li>
 	</form>
+		</div>
 	</div>
 	<script type="text/javascript" src="<?php echo base_url().'style/index.js'?>"></script>
 </body>
